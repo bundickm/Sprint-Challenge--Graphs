@@ -18,22 +18,34 @@ roomGraph={494: [(1, 8), {'e': 457}], 492: [(1, 20), {'e': 400}], 493: [(2, 5), 
 world.loadGraph(roomGraph)
 world.printRooms()
 player = Player("Name", world.startingRoom)
-
-
-# FILL THIS IN
-traversalPath = ['n', 's']
-
+reverse = {'n':'s', 'e':'w', 's':'n', 'w':'e'}
+valid_path = []
+backtrack = []
+while player.get_unique_rooms_visited() != len(roomGraph):
+    move_choices = player.get_unvisited_directions()
+    if move_choices != []:
+        move = random.choice(move_choices)
+        valid_path.append(move)
+        backtrack.append(move)
+        player.travel(move)
+    else:
+        move = backtrack[-1]
+        backtrack.pop(-1)
+        valid_path.append(reverse[move])
+        player.travel(reverse[move])
+print(valid_path)
+print(len(valid_path))
 
 # TRAVERSAL TEST
 visited_rooms = set()
 player.currentRoom = world.startingRoom
 visited_rooms.add(player.currentRoom)
-for move in traversalPath:
+for move in valid_path:
     player.travel(move)
     visited_rooms.add(player.currentRoom)
 
 if len(visited_rooms) == len(roomGraph):
-    print(f"TESTS PASSED: {len(traversalPath)} moves, {len(visited_rooms)} rooms visited")
+    print(f"TESTS PASSED: {len(valid_path)} moves, {len(visited_rooms)} rooms visited")
 else:
     print("TESTS FAILED: INCOMPLETE TRAVERSAL")
     print(f"{len(roomGraph) - len(visited_rooms)} unvisited rooms")
